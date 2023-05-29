@@ -1,0 +1,7 @@
+.elements__die {
+    background-color: white;
+    display: flex;
+    justify-content: space-between;
+    padding: 22px 20px 22px;
+    box-sizing: border-box;
+}

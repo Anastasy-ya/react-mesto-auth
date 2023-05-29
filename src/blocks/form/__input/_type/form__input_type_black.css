@@ -1,0 +1,5 @@
+.form__input_type_black {
+  border-bottom: 2px rgba(255, 255, 255, 1) solid;
+  background-color: black;
+  color: #ffffff;
+}

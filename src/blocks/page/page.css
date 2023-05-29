@@ -1,0 +1,29 @@
+.page {
+  max-width: 880px;
+  display: grid;
+  margin: 0 auto;
+  grid-template-rows: 45px 74px 40px auto 66px 18px 60px;
+  grid-template-areas:
+    "."
+    "header"
+    "."
+    "content"
+    "."
+    "footer"
+    ".";
+  box-sizing: border-box;
+  font-family: Inter, Arial, Helvetica, sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  -webkit-text-size-adjust: 100%;
+  -ms-text-size-adjust: 100%;
+  -moz-text-size-adjust: 100%;
+  text-rendering: optimizeLegibility;
+  height: 100vh;
+}
+
+@media screen and (max-width: 920px) {
+  .page {
+    grid-template-rows: 28px 53px 45px auto 48px 19px 36px;
+  }
+}

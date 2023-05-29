@@ -1,0 +1,6 @@
+.entry-container__form {
+  display: flex;
+  flex-direction: column;
+  gap: 175px;
+  padding: 49px 0 0;
+}

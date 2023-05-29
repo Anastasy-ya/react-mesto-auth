@@ -1,0 +1,11 @@
+.entry-container__subtitle_type_link {
+  text-decoration: none;
+  margin: 0;
+  padding: 0;
+  cursor: pointer;
+  transition: opacity 0.5s linear;
+}
+
+.entry-container__subtitle_type_link:hover {
+  opacity: 0.6;
+}
