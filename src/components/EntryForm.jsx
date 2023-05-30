@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 
-function EntryForm({ title, formName, buttonName, onSubmit }) {
+function EntryForm({ title, formName, buttonName, onSubmit, isLoading }) {
   const [userData, setUserData] = useState({ email: "", password: "" });
 
   //запишем данные таргета в соответствующие поля userData, неизмененные поля не меняем
@@ -63,7 +63,7 @@ function EntryForm({ title, formName, buttonName, onSubmit }) {
             type="submit"
             aria-label="Register"
           >
-            {buttonName}
+            { isLoading ? buttonName + "..." : buttonName }
           </button>
         </div>
       </form>

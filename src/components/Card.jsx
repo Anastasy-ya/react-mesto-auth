@@ -23,7 +23,7 @@ function Card({ card, onCardClick, onCardLike, onCardDelete }) {
           className="elements__delete"
           type="button"
           aria-label="Delete"
-          onClick={() => onCardDelete(card)}
+          onClick={() => onCardDelete({ _id })}
         />
       )}
 

@@ -1,6 +1,7 @@
 import React from "react";
 import usePopupClose from "./hooks/usePopupClose";
 
+//модуль для всех попапов. Представляет из себя окно попапа и кнопку закрытия
 function PopupFrame({ formName, isOpen, onClose, content }) {
   usePopupClose(isOpen, onClose);
 

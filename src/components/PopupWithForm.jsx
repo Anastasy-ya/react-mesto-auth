@@ -1,6 +1,7 @@
 import React from "react";
 import PopupForm from "./PopupFrame";
 
+//является модулем для попапов EditAvatarPopup, EditProfilePopup, AddPlacePopup
 function PopupWithForm({
   title,
   formName,
@@ -9,7 +10,9 @@ function PopupWithForm({
   onClose,
   children,
   onSubmit,
+  isLoading
 }) {
+
   return (
     <PopupForm
       title={title}
@@ -27,7 +30,7 @@ function PopupWithForm({
           >
             {children}
             <button className="popup__button" type="submit" aria-label="Save">
-              {buttonName}
+              { isLoading ? buttonName + "..." : buttonName}
             </button>
           </form>
         </>

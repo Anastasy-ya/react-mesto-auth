@@ -2,7 +2,7 @@ import React from "react";
 
 import EntryForm from "./EntryForm";
 
-function Login({ title, formName, buttonName, onSubmit, isOpen }) {
+function Login({ title, formName, buttonName, onSubmit, isOpen, isLoading }) {
   return (
     <div className="entry-container content">
       <EntryForm
@@ -11,6 +11,7 @@ function Login({ title, formName, buttonName, onSubmit, isOpen }) {
         title={title}
         formName={formName}
         buttonName={buttonName}
+        isLoading={isLoading}
       />
     </div>
   );

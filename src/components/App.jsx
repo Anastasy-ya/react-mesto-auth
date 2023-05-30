@@ -2,7 +2,6 @@ import React, { useState } from "react";
 import Header from "./Header";
 import Main from "./Main";
 import Footer from "./Footer";
-import PopupWithForm from "./PopupWithForm";
 import ImagePopup from "./ImagePopup";
 import Login from "./Login";
 import Register from "./Register";
@@ -16,6 +15,8 @@ import { Route, Routes, Navigate, useNavigate } from "react-router-dom";
 import { CurrentUserContext } from "../contexts/CurrentUserContext";
 import * as auth from "../utils/auth";
 
+import PopupWithConfirm from "./PopupWithConfirm";
+
 function App() {
   const [isEditProfilePopupOpen, setIsEditProfilePopupOpen] =
     React.useState(false);
@@ -26,6 +27,7 @@ function App() {
   const [selectedCard, setSelectedCard] = React.useState({
     name: "",
     link: "",
+    _id: ""
   });
   const [isOpenImage, setIsOpenImage] = React.useState(false);
   const [currentUser, setCurrentUser] = React.useState({}); //
@@ -35,7 +37,9 @@ function App() {
   const [openInfoTooltip, setOpenInfoTooltip] = useState(false);
   const navigate = useNavigate();
   const [isEntry, setIsEntry] = useState(false); //стейт для инфотула
-  const [userMessage, setUserMessage] = useState(""); //
+  const [userMessage, setUserMessage] = useState("");
+  const [isOpenConfirmationPopup, setIsOpenConfirmationPopup] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
 
   React.useEffect(() => {
     if (localStorage.getItem("jwt")) {
@@ -58,7 +62,7 @@ function App() {
           setCards(initialCards);
         })
         .catch(console.error);
-      }
+    }
   }, [isLoggedIn]);
 
   React.useEffect(() => {
@@ -69,16 +73,17 @@ function App() {
           setCurrentUser(userData);
         })
         .catch(console.error);
-      }
+    }
   }, [isLoggedIn]);
 
   function closeAllPopups() {
     setIsEditProfilePopupOpen(false);
     setIsAddPlacePopupOpen(false);
     setIsEditAvatarPopupOpen(false);
-    setSelectedCard({ name: "", link: "" });
+    setSelectedCard({ name: "", link: "",_id: "" });
     setIsOpenImage(false);
     setOpenInfoTooltip(false);
+    setIsOpenConfirmationPopup(false);
   }
 
   function handleEditAvatarClick() {
@@ -93,6 +98,10 @@ function App() {
   function handleCardClick({ name, link }) {
     setSelectedCard({ name, link });
     setIsOpenImage(true);
+  }
+  function handleOpenConfirmationPopup({ _id }) {
+    setIsOpenConfirmationPopup(true);
+    setSelectedCard({ _id });
   }
 
   function handleCardLike(card) {
@@ -109,54 +118,66 @@ function App() {
       .catch(console.error);
   }
 
-  function handleCardDelete(card) {
+  function handleCardDelete() {
+    setIsLoading(true);
     api
-      .deleteCard(card._id)
+      .deleteCard(selectedCard._id)
       .then(() => {
-        setCards((state) => state.filter((c) => c._id !== card._id));
+        setCards((state) => state.filter((c) => c._id !== selectedCard._id));
+        closeAllPopups();
       })
-      .catch(console.error);
+      .catch(console.error)
+      .finally(() => {
+        setIsLoading(false);
+      });
   }
 
   function handleUpdateUser(data) {
+    setIsLoading(true);
     api
       .setUserData(data)
       .then((res) => {
         setCurrentUser(res);
         closeAllPopups();
       })
-      .catch(console.error);
+      .catch(console.error)
+      .finally(() => {
+      setIsLoading(false);
+    });
   }
 
   function handleUpdateAvatar(link) {
+    setIsLoading(true);
     api
       .saveAvatar(link)
       .then((res) => {
         setCurrentUser(res);
         closeAllPopups();
       })
-      .catch(console.error);
-    // .finally(() => {
-    //   popupWithFormEditAvatar.preloader("Cохранить");
-    // });
+      .catch(console.error)
+      .finally(() => {
+        setIsLoading(false);
+      });
   }
 
   function handleAddPlaceSubmit(data) {
+    setIsLoading(true);
     api
       .addCard(data)
       .then((newCard) => {
         setCards([newCard, ...cards]);
         closeAllPopups();
       })
-      .catch(console.error);
-    // .finally(() => {
-    //   popupWithFormEditAvatar.preloader("Cохранить");
-    // });
+      .catch(console.error)
+      .finally(() => {
+        setIsLoading(false);
+      });
   }
 
   //далее все функции, относящие ся к роутингу и авторизации
 
   function handleRegister({ email, password }) {
+    setIsLoading(true);
     auth
       .register({ email, password })
       .then((res) => {
@@ -171,11 +192,12 @@ function App() {
       })
       .finally(() => {
         setOpenInfoTooltip(true);
-        //   popupWithFormEditAvatar.preloader("Cохранить");
+        setIsLoading(false);
       });
   }
 
   function handleLogin({ email, password }) {
+    setIsLoading(true);
     auth
       .login({ email, password })
       .then((res) => {
@@ -189,6 +211,9 @@ function App() {
         setIsEntry(false);
         setUserMessage("Что-то пошло не так! Попробуйте ещё раз.");
         setOpenInfoTooltip(true);
+      })
+      .finally(() => {
+        setIsLoading(false);
       });
   }
 
@@ -204,7 +229,7 @@ function App() {
           <Header userEmail={userEmail} deleteToken={deleteToken} />
           <Routes>
             <Route
-              path="*" //стр не существует
+              path="*" //пользователь вошел на несуществующую страницу
               element={
                 isLoggedIn ? (
                   <Navigate to="/" />
@@ -223,6 +248,7 @@ function App() {
                   formName={"sign-up"}
                   buttonName={"Зарегистрироваться"}
                   onclose={closeAllPopups}
+                  isLoading={isLoading}
                 />
               }
             />
@@ -235,6 +261,7 @@ function App() {
                   title={"Вход"}
                   formName={"sign-in"}
                   buttonName={"Войти"}
+                  isLoading={isLoading}
                 />
               }
             />
@@ -250,7 +277,7 @@ function App() {
                   onEditAvatar={handleEditAvatarClick}
                   cards={cards}
                   onCardLike={handleCardLike}
-                  onCardDelete={handleCardDelete}
+                  onCardDelete={handleOpenConfirmationPopup} //удаляет handleCardDelete, а сюда подставим ф-ю открывающую попап
                   onCardClick={handleCardClick}
                 />
               }
@@ -260,21 +287,25 @@ function App() {
             isOpen={isEditProfilePopupOpen}
             onClose={closeAllPopups}
             onUpdateUser={handleUpdateUser}
+            isLoading={isLoading}
           />
           <AddPlacePopup //добавление новой карточки
             isOpen={isAddPlacePopupOpen}
             onClose={closeAllPopups}
             onAddPlace={handleAddPlaceSubmit}
+            isLoading={isLoading}
           />
           <EditAvatarPopup //редактирование аватара
             isOpen={isEditAvatarPopupOpen}
             onClose={closeAllPopups}
             onUpdateAvatar={handleUpdateAvatar}
+            isLoading={isLoading}
           />
-          <PopupWithForm //подключить
-            title={"Вы уверены?"}
-            formName={"delete"}
-            buttonName={"Да"}
+          <PopupWithConfirm 
+            isOpen={isOpenConfirmationPopup}
+            onClose={closeAllPopups}
+            onConfirm={handleCardDelete}
+            isLoading={isLoading}
           />
           <ImagePopup
             onClose={closeAllPopups}
