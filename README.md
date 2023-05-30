@@ -1,6 +1,5 @@
-# mesto-react
+# mesto. React.js
 
 - Учебный проект
-- React.js
 
 gh-pages: https://anastasy-ya.github.io/react-mesto-auth/
