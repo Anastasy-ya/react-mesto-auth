@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import Header from "./Header";
 import Main from "./Main";
 import Footer from "./Footer";
@@ -15,8 +15,6 @@ import { ProtectedRoute } from "./ProtectedRoute";
 import { Route, Routes, Navigate, useNavigate } from "react-router-dom";
 import { CurrentUserContext } from "../contexts/CurrentUserContext";
 import * as auth from "../utils/auth";
-// import { useHistory } from 'react-router-dom';
-// const history = useHistory();
 
 function App() {
   const [isEditProfilePopupOpen, setIsEditProfilePopupOpen] =
@@ -32,6 +30,12 @@ function App() {
   const [isOpenImage, setIsOpenImage] = React.useState(false);
   const [currentUser, setCurrentUser] = React.useState({}); //
   const [cards, setCards] = React.useState([]);
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const [userEmail, setUserEmail] = useState("");
+  const [openInfoTooltip, setOpenInfoTooltip] = useState(false);
+  const navigate = useNavigate();
+  const [isEntry, setIsEntry] = useState(false); //стейт для инфотула
+  const [userMessage, setUserMessage] = useState(""); //
 
   React.useEffect(() => {
     if (localStorage.getItem("jwt")) {
@@ -41,7 +45,6 @@ function App() {
           setIsLoggedIn(true);
           navigate("/", { replace: true });
           setUserEmail(res.data.email);
-          console.log(res);
         })
         .catch(console.error);
     }
@@ -103,7 +106,6 @@ function App() {
   }
 
   function handleCardDelete(card) {
-
     api
       .deleteCard(card._id)
       .then(() => {
@@ -150,13 +152,6 @@ function App() {
 
   //далее все функции, относящие ся к роутингу и авторизации
 
-  const [isLoggedIn, setIsLoggedIn] = useState(false);
-  const [userEmail, setUserEmail] = useState("");
-  const [openInfoTooltip, setOpenInfoTooltip] = useState(false);
-  const navigate = useNavigate();
-  const [isEntry, setIsEntry] = useState(false); //стейт для инфотула
-  const [userMessage, setUserMessage] = useState(""); //
-
   function handleRegister({ email, password }) {
     auth
       .register({ email, password })
@@ -193,8 +188,6 @@ function App() {
       });
   }
 
-  
-
   function deleteToken() {
     localStorage.removeItem("jwt");
     setUserEmail("");
@@ -210,7 +203,7 @@ function App() {
               path="*" //стр не существует
               element={
                 isLoggedIn ? (
-                  <Navigate to="/" /> //здесь при добавлении новых страниц заменить адрес перенаправления на страницу, с которой пришел юзер
+                  <Navigate to="/" />
                 ) : (
                   <Navigate to="/sign-up" replace />
                 )
@@ -274,7 +267,7 @@ function App() {
             onClose={closeAllPopups}
             onUpdateAvatar={handleUpdateAvatar}
           />
-          <PopupWithForm//подключить
+          <PopupWithForm //подключить
             title={"Вы уверены?"}
             formName={"delete"}
             buttonName={"Да"}

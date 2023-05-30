@@ -1,5 +1,4 @@
 import React from "react";
-import api from "../utils/Api";
 import Card from "./Card";
 import { CurrentUserContext } from "../contexts/CurrentUserContext";
 
@@ -12,10 +11,6 @@ function Main({
   onCardDelete,
   onCardClick,
 }) {
-  // const [userName, setUserName] = React.useState("");
-  // const [userDescription, setUserDescription] = React.useState("");
-  // const [userAvatar, setUserAvatar] = React.useState("");
-  // const [cards, setCards] = React.useState([]);
 
   const currentUser = React.useContext(CurrentUserContext);
 
