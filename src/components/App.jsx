@@ -51,22 +51,26 @@ function App() {
   }, []);
 
   React.useEffect(() => {
-    api
-      .getInitialCards()
-      .then((initialCards) => {
-        setCards(initialCards);
-      })
-      .catch(console.error);
-  }, []);
+    if (isLoggedIn) {
+      api
+        .getInitialCards()
+        .then((initialCards) => {
+          setCards(initialCards);
+        })
+        .catch(console.error);
+      }
+  }, [isLoggedIn]);
 
   React.useEffect(() => {
-    api
-      .getUserData()
-      .then((userData) => {
-        setCurrentUser(userData);
-      })
-      .catch(console.error);
-  }, []);
+    if (isLoggedIn) {
+      api
+        .getUserData()
+        .then((userData) => {
+          setCurrentUser(userData);
+        })
+        .catch(console.error);
+      }
+  }, [isLoggedIn]);
 
   function closeAllPopups() {
     setIsEditProfilePopupOpen(false);
